@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('categories', 'categories.index')->name('categories.index');
         Route::view('units', 'units.index')->name('units.index');
         Route::view('products', 'products.index')->name('products.index');
+        Route::view('low-stock', 'products.low-in-stock-only')->name('low-stock.index');
     });
 
     // =========================================================================
