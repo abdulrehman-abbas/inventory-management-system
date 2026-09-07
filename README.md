@@ -48,15 +48,84 @@ A robust, enterprise-grade **Inventory Management System** built with **Laravel 
 
 ## 🚀 Quick Start
 
-Follow these steps to set up the project locally for development or testing.
+### Option A: Docker (Recommended)
 
-### Prerequisites
+Run the entire stack — **Nginx, PHP, frontend assets, and PostgreSQL** — with one command. No local PHP, Composer, Node, or database installation required.
+
+#### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/) 20.10+
+- [Docker Compose](https://docs.docker.com/compose/install/) v2+
+
+#### Start the application
+
+1. **Clone the repository:**
+    ```bash
+    git clone https://github.com/fajarghifar/inventory-management-system.git
+    cd inventory-management-system
+    ```
+
+2. **Build and start the containers:**
+    ```bash
+    docker compose up --build -d
+    ```
+
+3. **Open the app** at [http://localhost:8080](http://localhost:8080)
+
+4. **Login with the default admin credentials:**
+    - **Username:** `admin`
+    - **Password:** `password`
+
+On first start, Docker automatically:
+- Builds frontend assets (Vite)
+- Starts a PostgreSQL container (no local DB needed)
+- Runs migrations and seeders
+- Starts Nginx, PHP-FPM, and the queue worker
+
+#### Useful Docker commands
+
+| Command | Description |
+|---------|-------------|
+| `docker compose up --build -d` | Build and start in the background |
+| `docker compose down` | Stop and remove containers |
+| `docker compose down -v` | Stop and remove containers **and** database/storage volumes |
+| `docker compose logs -f` | Follow application logs |
+| `docker compose exec app php artisan migrate` | Run migrations manually |
+| `docker compose exec app php artisan db:seed` | Run seeders manually |
+
+#### Configuration
+
+Default Docker settings are in `.env.docker` and `docker-compose.yml`:
+
+| Variable | Default |
+|----------|---------|
+| `APP_PORT` | `8080` |
+| `DB_HOST` | `postgres` (Docker service — not your local machine) |
+| `DB_PORT` | `5432` |
+| `DB_DATABASE` | `inventory` |
+| `DB_USERNAME` | `inventory` |
+| `DB_PASSWORD` | `secret` |
+
+To use a different port, create a `.env` file in the project root (or export the variable):
+
+```bash
+APP_PORT=9000 docker compose up --build -d
+```
+
+Data is persisted in Docker volumes (`postgres_data`, `storage_data`) so it survives container restarts.
+
+---
+
+### Option B: Manual Installation
+
+Follow these steps to set up the project locally without Docker.
+
+#### Prerequisites
 - PHP 8.2 or higher
 - Composer
 - Node.js & NPM
 - MySQL Database
 
-### Installation Steps
+#### Installation Steps
 
 1. **Clone the repository:**
     ```bash
@@ -123,8 +192,33 @@ Follow these steps to set up the project locally for development or testing.
 ## 💡 Contributing
 
 Have ideas to improve the system? Architecture enhancements, UI tweaks, or bug reports are welcome!
-- Submit a **Pull Request (PR)**
-- Create an **Issue** for feature requests or structural bugs
+
+### Getting started as a contributor
+
+1. **Fork** the repository and clone your fork locally.
+2. **Start the app with Docker** (fastest way to verify your changes):
+    ```bash
+    docker compose up --build -d
+    ```
+3. Make your changes and test them at [http://localhost:8080](http://localhost:8080).
+4. Submit a **Pull Request (PR)** with a clear description of what changed and why.
+5. Create an **Issue** for feature requests or bugs you cannot fix yourself.
+
+### Docker architecture
+
+The project ships with a Docker Compose setup:
+
+| Service | Role |
+|---------|------|
+| **app** | Nginx + PHP-FPM + Laravel backend + queue worker |
+| **postgres** | PostgreSQL 16 database (runs inside Docker, not on your PC) |
+
+Relevant files:
+
+- `Dockerfile` — multi-stage build (Node for assets, PHP for runtime)
+- `docker-compose.yml` — app and PostgreSQL services (`image: inert/laravel-app:new`)
+- `docker/entrypoint.sh` — waits for PostgreSQL, runs migrations and seeding
+- `.env.docker` — environment template for the app container
 
 ## 📄 License
 
