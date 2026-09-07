@@ -116,9 +116,14 @@
                 <div class="text-xl sm:text-2xl font-bold">
                     {{ count($lowStockProducts) }}
                 </div>
-                <p class="text-xs text-muted-foreground mt-1">
+                <div class="flex justify-between items-center">
+                 <p class="text-xs text-muted-foreground mt-1">
                     Items below min stock
                 </p>
+
+
+                  <a href="{{ route('low-stock.index') }}" class="cursor-pointer text-bold text-xs text-black">View</a>
+               </div>
             </div>
         </div>
     </div>
